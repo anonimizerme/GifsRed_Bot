@@ -56,6 +56,12 @@ package:
     - ./bin/**
 
 functions:
+  gifsred_bot:
+    handler: bin/gifsred_bot
+    events:
+      - httpApi:
+          path: /bot
+          method: post
   hello:
     handler: bin/hello
     events:
