@@ -58,6 +58,8 @@ package:
 functions:
   gifsred_bot:
     handler: bin/gifsred_bot
+    environment:
+      TELEGRAM_BOT_TOKEN: "%fill_with_value%"
     events:
       - httpApi:
           path: /bot
