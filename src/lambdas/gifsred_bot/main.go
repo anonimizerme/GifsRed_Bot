@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	telegram "main/src/common"
+	"os"
 )
 
 type Request events.APIGatewayProxyRequest
@@ -20,20 +22,6 @@ type RequestBody struct {
 	} `json:"inline_query"`
 }
 
-type ResultGif struct {
-	Type     string `json:"type"`
-	Id       string `json:"id"`
-	GifUrl   string `json:"gif_url"`
-	ThumbUrl string `json:"thumb_url"`
-	Title    string `json:"title"`
-	Caption  string `json:"caption"`
-}
-
-type ResponseBody struct {
-	InlineQueryId string      `json:"inline_query_id"`
-	Results       []ResultGif `json:"results"`
-}
-
 func Handler(_ context.Context, req Request) (Response, error) {
 	var body RequestBody
 
@@ -46,21 +34,19 @@ func Handler(_ context.Context, req Request) (Response, error) {
 		}, err
 	}
 
-	responseBytes, err := json.Marshal(ResponseBody{
-		InlineQueryId: "28897460322723016",
-		Results: []ResultGif{{
-			Type:     "gif",
-			Id:       fmt.Sprintf("id: %s", body.InlineQuery.Query),
-			GifUrl:   "https://thumbs2.redgifs.com/BiodegradableJealousAnaconda-mobile.mp4#t=0",
-			ThumbUrl: "https://thumbs2.redgifs.com/BiodegradableJealousAnaconda-mobile.mp4#t=0",
-			Title:    fmt.Sprintf("title: %s", body.InlineQuery.Query),
-			Caption:  fmt.Sprintf("caption: %s", body.InlineQuery.Query),
-		}},
-	})
+	client := telegram.GetTelegramBot(os.Getenv("TELEGRAM_BOT_TOKEN"))
+
+	_, err = client.AnswerInlineQuery(body.InlineQuery.Id, body.InlineQuery.Query)
+
+	if err != nil {
+		fmt.Println(err)
+		return Response{
+			StatusCode: 500,
+		}, err
+	}
 
 	return Response{
 		StatusCode: 200,
-		Body:       string(responseBytes[:]),
 	}, nil
 }
 
