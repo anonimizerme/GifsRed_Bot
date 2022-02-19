@@ -4,6 +4,9 @@
 # Serverless directories
 .serverless
 
+# Deployment variables
+serverless_vars.yml
+
 # goland modules
 vendor
 

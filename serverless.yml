@@ -50,6 +50,9 @@ provider:
 #  environment:
 #    variable1: value1
 
+custom:
+  vars: ${file(./serverless_vars.yml)}
+
 package:
   patterns:
     - '!./**'
@@ -59,7 +62,7 @@ functions:
   gifsred_bot:
     handler: bin/gifsred_bot
     environment:
-      TELEGRAM_BOT_TOKEN: "%fill_with_value%"
+      TELEGRAM_BOT_TOKEN: ${self:custom.vars.TELEGRAM_BOT_TOKEN}
     events:
       - httpApi:
           path: /bot
