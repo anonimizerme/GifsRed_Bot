@@ -1,4 +1,4 @@
-.PHONY: build clean deploy
+.PHONY: build clean deploy deploy_simple_bot
 
 build:
 #	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/hello hello/main.go
@@ -10,3 +10,6 @@ clean:
 
 deploy: clean build
 	sls deploy --verbose
+
+deploy_simple_bot: clean build
+	sls deploy --verbose -f gifsred_bot

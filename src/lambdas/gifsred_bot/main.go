@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	telegram "main/src/common"
+	"main/src/common/redgifs"
+	"main/src/common/telegram"
 	"os"
 )
 
@@ -36,7 +37,15 @@ func Handler(_ context.Context, req Request) (Response, error) {
 
 	client := telegram.GetTelegramBot(os.Getenv("TELEGRAM_BOT_TOKEN"))
 
-	_, err = client.AnswerInlineQuery(body.InlineQuery.Id, body.InlineQuery.Query)
+	redgifsResult, err := redgifs.Search(body.InlineQuery.Query)
+	if err != nil {
+		fmt.Println(err)
+		return Response{
+			StatusCode: 500,
+		}, err
+	}
+
+	_, err = client.AnswerInlineQuery(body.InlineQuery.Id, redgifsResult)
 
 	if err != nil {
 		fmt.Println(err)
